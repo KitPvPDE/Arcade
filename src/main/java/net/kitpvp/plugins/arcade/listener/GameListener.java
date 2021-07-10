@@ -2,10 +2,12 @@ package net.kitpvp.plugins.arcade.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
-import net.kitpvp.plugins.kitpvp.modules.listener.annotations.Calls;
+import net.kitpvp.plugins.kitpvp.modules.listener.annotation.Calls;
 import net.kitpvp.plugins.kitpvpcore.user.User;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -26,5 +28,14 @@ public class GameListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         User user = User.getUser(event.getPlayer());
         this.plugin.getEventRegister().callEvent(event, user, this.plugin.getGame().getState());
+    }
+
+    @EventHandler
+    @Calls(EntityDamageEvent.class)
+    public void onDamage(EntityDamageEvent event) {
+        if(event.getEntity() instanceof Player) {
+            User user = User.getUser((Player) event.getEntity());
+            this.plugin.getEventRegister().callEvent(EntityDamageEvent.class, event, user, this.plugin.getGame().getState());
+        }
     }
 }

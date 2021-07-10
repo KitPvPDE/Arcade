@@ -2,10 +2,9 @@ package net.kitpvp.plugins.arcade;
 
 import lombok.Getter;
 import net.kitpvp.lavendle.LavendlePlugin;
-import net.kitpvp.plugins.arcade.factory.ArcadeCategoryFactory;
+import net.kitpvp.plugins.arcade.factory.ArcadeListenerFactory;
 import net.kitpvp.plugins.arcade.game.ArcadeGame;
 import net.kitpvp.plugins.arcade.game.status.LobbyStatus;
-import net.kitpvp.plugins.kitpvp.modules.listener.factory.LambdaListenerFactory;
 import net.kitpvp.plugins.kitpvp.modules.listener.register.GlobalEventRegister;
 import net.kitpvp.plugins.kitpvpcore.KitPvPCore;
 import org.bukkit.Bukkit;
@@ -27,9 +26,8 @@ public class ArcadePlugin extends JavaPlugin {
     public void onLoad() {
         this.core = KitPvPCore.getInstance();
         this.core.setUserFactory(ArcadeUser.USER_FACTORY);
-        this.eventRegister = new GlobalEventRegister<>(ArcadeCategory::shortOrdinal);
-        this.core.getListenerRegister().registerFactory(LambdaListenerFactory.newListenerFactory(this.eventRegister,
-                ArcadeCategoryFactory.INSTANCE));
+        this.eventRegister = GlobalEventRegister.newEventRegister(null);
+        this.core.getListenerRegister().registerFactory(new ArcadeListenerFactory(this.eventRegister));
     }
 
     @Override

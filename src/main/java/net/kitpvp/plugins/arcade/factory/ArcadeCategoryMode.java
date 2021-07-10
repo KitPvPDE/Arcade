@@ -1,21 +1,20 @@
 package net.kitpvp.plugins.arcade.factory;
 
-import net.kitpvp.plugins.kitpvp.util.function.UnaryShortPredicate;
+import lombok.RequiredArgsConstructor;
+import net.kitpvp.plugins.kitpvp.modules.listener.AbstractStageableMode;
 
-public enum ArcadeCategoryMode implements UnaryShortPredicate {
+@RequiredArgsConstructor
+public enum ArcadeCategoryMode implements AbstractStageableMode {
 
-    EQUAL() {
-        @Override
-        public boolean test(short l, short r) {
-            return l == r;
-        }
-    },
-    ANY() {
-        @Override
-        public boolean test(short l, short r) {
-            return true;
-        }
-    };
+    EQUAL(AbstractStageableMode.EQUAL),
+    ANY(AbstractStageableMode.ANY),
+    NOT(AbstractStageableMode.NOT),
+    ;
 
-    public abstract boolean test(short l, short r);
+    private final AbstractStageableMode parent;
+
+    @Override
+    public boolean test(int i, int i1) {
+        return this.parent.test(i, i1);
+    }
 }
