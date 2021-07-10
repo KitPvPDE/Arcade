@@ -14,7 +14,7 @@ public @interface ArcadeEvent {
 
     ArcadeCategory category();
 
-    ArcadeCategoryMode categoryMode();
+    ArcadeCategoryMode categoryMode() default ArcadeCategoryMode.EQUAL;
 
     EventPriority priority() default EventPriority.NORMAL;
 }
