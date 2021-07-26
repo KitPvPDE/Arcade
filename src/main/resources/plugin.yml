@@ -2,3 +2,4 @@ name: "Arcade"
 version: "1.0"
 main: "net.kitpvp.plugins.arcade.ArcadePlugin"
 author: "The KitPvP project"
+depend: [KitPvPCore]
