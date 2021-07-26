@@ -9,7 +9,7 @@
         <version>dev-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Arcarde</artifactId>
+    <artifactId>Arcade</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
