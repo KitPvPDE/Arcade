@@ -16,6 +16,9 @@ import java.util.logging.Level;
 public class ArcadePlugin extends JavaPlugin {
 
     @Getter
+    private static ArcadePlugin plugin;
+
+    @Getter
     private KitPvPCore core;
     @Getter
     private GlobalEventRegister<ArcadeCategory> eventRegister;
@@ -24,6 +27,8 @@ public class ArcadePlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        plugin = this;
+
         this.core = KitPvPCore.getInstance();
         this.core.setUserFactory(ArcadeUser.USER_FACTORY);
         this.eventRegister = GlobalEventRegister.newEventRegister(null);
