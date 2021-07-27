@@ -9,6 +9,7 @@ import net.kitpvp.plugins.arcade.item.Items;
 import net.kitpvp.plugins.kitpvp.modules.listener.listeners.Listener;
 import net.kitpvp.plugins.kitpvpcore.user.User;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.PlayerInventory;
@@ -33,5 +34,10 @@ public class GameplayListener implements Listener {
     public void onLeave(PlayerQuitEvent event, User user) {
         Chat.localeAnnounce("arcade.quit.msg",
                 user.getNameNick(), this.plugin.getGame().getParticipants().size(), this.plugin.getGame().getConfiguration().getMaxPlayers());
+    }
+
+    @ArcadeEvent(category = ArcadeCategory.LOBBY)
+    public void onDamage(EntityDamageEvent event) {
+        event.setCancelled(true);
     }
 }
