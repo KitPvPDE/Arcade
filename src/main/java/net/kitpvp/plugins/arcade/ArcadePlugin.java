@@ -2,6 +2,7 @@ package net.kitpvp.plugins.arcade;
 
 import lombok.Getter;
 import net.kitpvp.lavendle.LavendlePlugin;
+import net.kitpvp.network.api.ServerStatus;
 import net.kitpvp.plugins.arcade.factory.ArcadeListenerFactory;
 import net.kitpvp.plugins.arcade.game.ArcadeGame;
 import net.kitpvp.plugins.arcade.game.status.LobbyStatus;
@@ -46,6 +47,8 @@ public class ArcadePlugin extends JavaPlugin {
         }
         this.game.switchStatus(new LobbyStatus(this.game, this.game.getConfiguration().getLobbyTime()));
         this.core.getListenerRegister().registerListenersRecursive("net.kitpvp.plugins.arcade.listener", this);
+
+        KitPvPCore.getInstance().setServerStatus(ServerStatus.AVAILABLE);
     }
 
     @Override

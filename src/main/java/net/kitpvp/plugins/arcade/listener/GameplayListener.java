@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.kitpvp.gameapi.event.GameStatusChangeEvent;
 import net.kitpvp.plugins.arcade.ArcadeCategory;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
+import net.kitpvp.plugins.arcade.chat.Chat;
 import net.kitpvp.plugins.kitpvp.modules.listener.GlobalEvent;
 import net.kitpvp.plugins.kitpvp.modules.listener.listeners.Listener;
 import net.kitpvp.plugins.kitpvpcore.user.User;
@@ -38,6 +39,8 @@ public class GameplayListener implements Listener {
     @GlobalEvent(priority = EventPriority.LOW)
     public void onStatusSwitch(GameStatusChangeEvent event) {
         if (this.plugin.getGame().getParticipants().size() <= this.plugin.getGame().getConfiguration().getMinPlayers()) {
+            Chat.localeAnnounce("arcade.lobby.starting.cancelled");
+
             event.setCancelled(true);
         }
     }
