@@ -21,7 +21,7 @@ public class ArcadeConfiguration {
     private final Location jnrStart, jnrSpawn;
 
     public ArcadeConfiguration(ArcadePlugin plugin) {
-        plugin.saveDefaultConfig();
+        plugin.saveResource("config.yml", true);
 
         FileConfiguration configuration = plugin.getConfig();
         // general configuration

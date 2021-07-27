@@ -49,6 +49,8 @@ public class LobbyStatus extends ArcadeGameStatus {
                 Chat.localeAnnounce(ChatFormats.ARCADE, "arcade.lobby.starting.now",
                         this.getGame().getParticipants().size(), this.getGame().getConfiguration().getMaxPlayers());
 
+                System.out.println(this.getGame().getState());
+
                 Bukkit.playSound(Sound.NOTE_PLING, 1, 1.5);
                 this.getGame().getModeQueue().poll();
             } else {

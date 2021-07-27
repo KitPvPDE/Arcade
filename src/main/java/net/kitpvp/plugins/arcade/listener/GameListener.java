@@ -2,6 +2,7 @@ package net.kitpvp.plugins.arcade.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
+import net.kitpvp.plugins.kitpvp.events.movement.PlayerMoveEvent;
 import net.kitpvp.plugins.kitpvp.modules.listener.annotation.Calls;
 import net.kitpvp.plugins.kitpvpcore.user.User;
 import org.bukkit.entity.Player;
@@ -37,5 +38,13 @@ public class GameListener implements Listener {
             User user = User.getUser((Player) event.getEntity());
             this.plugin.getEventRegister().callEvent(EntityDamageEvent.class, event, user, this.plugin.getGame().getState());
         }
+    }
+
+    @EventHandler
+    @Calls(PlayerMoveEvent.class)
+    public void handlePlayerMove(PlayerMoveEvent event) {
+        User user = User.getUser(event.getPlayer());
+        System.out.println("called");
+        this.plugin.getEventRegister().callEvent(PlayerMoveEvent.class, event, user, this.plugin.getGame().getState());
     }
 }

@@ -1,11 +1,9 @@
 package net.kitpvp.plugins.arcade.game;
 
-import net.kitpvp.gameapi.Game;
+import java.util.function.IntUnaryOperator;
 import net.kitpvp.gameapi.GameState;
 import net.kitpvp.gameapi.status.CountingStatus;
 import net.kitpvp.plugins.arcade.ArcadeCategory;
-
-import java.util.function.IntUnaryOperator;
 
 public abstract class ArcadeGameStatus extends CountingStatus {
 

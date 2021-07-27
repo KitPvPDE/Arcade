@@ -1,10 +1,10 @@
 arcade:
   lobby:
-    time: 60
+    time: 15
 
   max-players: 60
   min-players: 1
 
   jnr:
-    spawn: "0,100,0"
-    start: "1,100,0"
+    spawn: "100,100,100"
+    start: "101,100,100"

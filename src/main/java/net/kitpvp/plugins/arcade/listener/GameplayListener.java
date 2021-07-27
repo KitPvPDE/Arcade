@@ -38,7 +38,7 @@ public class GameplayListener implements Listener {
 
     @GlobalEvent(priority = EventPriority.LOW)
     public void onStatusSwitch(GameStatusChangeEvent event) {
-        if (this.plugin.getGame().getParticipants().size() <= this.plugin.getGame().getConfiguration().getMinPlayers()) {
+        if (this.plugin.getGame().getParticipants().size() < this.plugin.getGame().getConfiguration().getMinPlayers()) {
             Chat.localeAnnounce("arcade.lobby.starting.cancelled");
 
             event.setCancelled(true);
