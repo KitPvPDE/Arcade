@@ -68,10 +68,8 @@ public class GameplayListener implements Listener {
         JNRLevel jnrLevel = JNRLevel.levelByJumps(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COUNT));
         Block generatedBlock = this.generateSafeLocation(currentBlock.getLocation(), jnrLevel).getBlock();
 
-        System.out.println(generatedBlock.getLocation().toVector().distance(currentBlock.getLocation().toVector()));
-
-        System.out.println("generated new block with level " + jnrLevel);
         generatedBlock.setType(Material.STAINED_GLASS);
+        generatedBlock.setData(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COLOR).getDyeData());
 
         if (blockHistory.size() > 2) {
             blockHistory.get(1).setType(Material.AIR);

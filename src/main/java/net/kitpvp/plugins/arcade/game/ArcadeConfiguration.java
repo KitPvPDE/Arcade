@@ -41,6 +41,8 @@ public class ArcadeConfiguration {
         private final Location jnrStart, jnrSpawn;
         @Getter
         private final int jumpTime;
+        @Getter
+        private final boolean colorBlocks;
 
         public JNRConfiguration(ArcadePlugin plugin) {
             FileConfiguration configuration = plugin.getConfig();
@@ -48,6 +50,7 @@ public class ArcadeConfiguration {
             this.jnrStart = locationFromConfig(configuration, "arcade.jnr.start", Bukkit.getWorlds().get(0));
             this.jnrSpawn = locationFromConfig(configuration, "arcade.jnr.spawn", Bukkit.getWorlds().get(0));
             this.jumpTime = configuration.getInt("arcade.jnr.jumpTime", 300);
+            this.colorBlocks = configuration.getBoolean("arcade.jnr.colorBlocksForEachPlayer", true);
         }
 
     }

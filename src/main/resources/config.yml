@@ -7,4 +7,5 @@ arcade:
 
   jnr:
     spawn: "128,4,1238"
-    start: "128,4,1238"
+    start: "128,3,1238"
+    deathmatch: "100,4,1238"

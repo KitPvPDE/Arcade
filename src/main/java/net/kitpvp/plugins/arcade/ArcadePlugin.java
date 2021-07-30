@@ -1,5 +1,6 @@
 package net.kitpvp.plugins.arcade;
 
+import java.util.logging.Level;
 import lombok.Getter;
 import net.kitpvp.lavendle.LavendlePlugin;
 import net.kitpvp.network.api.ServerStatus;
@@ -10,8 +11,6 @@ import net.kitpvp.plugins.kitpvp.modules.listener.register.GlobalEventRegister;
 import net.kitpvp.plugins.kitpvpcore.KitPvPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Level;
 
 @LavendlePlugin(name = "arcade")
 public class ArcadePlugin extends JavaPlugin {
