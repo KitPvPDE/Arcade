@@ -18,7 +18,7 @@ public class ArcadeConfiguration {
     private final int lobbyTime, maxPlayers, minPlayers;
 
     @Getter
-    private final Location jnrStart, jnrSpawn;
+    private final JNRConfiguration jnrConfiguration;
 
     public ArcadeConfiguration(ArcadePlugin plugin) {
         plugin.saveResource("config.yml", true);
@@ -32,7 +32,23 @@ public class ArcadeConfiguration {
         // lobby configuration
 
         // jnr configuration
-        this.jnrStart = locationFromConfig(configuration, "arcade.jnr.start", Bukkit.getWorlds().get(0));
-        this.jnrSpawn = locationFromConfig(configuration, "arcade.jnr.spawn", Bukkit.getWorlds().get(0));
+        this.jnrConfiguration = new JNRConfiguration(plugin);
+    }
+
+    public static class JNRConfiguration {
+
+        @Getter
+        private final Location jnrStart, jnrSpawn;
+        @Getter
+        private final int jumpTime;
+
+        public JNRConfiguration(ArcadePlugin plugin) {
+            FileConfiguration configuration = plugin.getConfig();
+
+            this.jnrStart = locationFromConfig(configuration, "arcade.jnr.start", Bukkit.getWorlds().get(0));
+            this.jnrSpawn = locationFromConfig(configuration, "arcade.jnr.spawn", Bukkit.getWorlds().get(0));
+            this.jumpTime = configuration.getInt("arcade.jnr.jumpTime", 300);
+        }
+
     }
 }

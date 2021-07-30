@@ -6,5 +6,5 @@ arcade:
   min-players: 1
 
   jnr:
-    spawn: "100,100,100"
-    start: "101,100,100"
+    spawn: "128,4,1238"
+    start: "128,4,1238"

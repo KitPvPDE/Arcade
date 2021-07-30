@@ -26,7 +26,7 @@ public class ArcadeGame extends Game<ArcadeCategory> {
         this.plugin = plugin;
         this.configuration = new ArcadeConfiguration(plugin);
         this.modeQueue = new ConcurrentLinkedQueue<>();
-        this.modeQueue.add(new JnrStatus(this)); // for now TODO load randomized subset of all modes
+        this.modeQueue.add(new JnrStatus(this, this.configuration.getJnrConfiguration().getJumpTime())); // for now TODO load randomized subset of all modes
     }
 
     public boolean switchStatus(@NotNull ArcadeGameStatus newStatus) {

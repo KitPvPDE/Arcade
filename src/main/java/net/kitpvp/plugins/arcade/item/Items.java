@@ -20,4 +20,13 @@ public class Items {
                 .callback(player -> player.performCommand("acradestats"))
                 .build();
     }
+
+    public interface JNR {
+        ClickableItem CHECKPOINT = ClickableItem.builder()
+            .item(new LavendleItem(Material.CARPET))
+            .name(ChatColor.RED + "Checkpoint")
+            .rightClick(true)
+            .leftClick(true)
+            .build();
+    }
 }
