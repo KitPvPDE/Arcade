@@ -7,18 +7,20 @@ import net.kitpvp.plugins.arcade.ArcadeCategory;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
 import net.kitpvp.plugins.arcade.ArcadeUser;
 import net.kitpvp.plugins.arcade.factory.ArcadeEvent;
-import net.kitpvp.plugins.arcade.game.ArcadeConfiguration;
 import net.kitpvp.plugins.arcade.game.ArcadeConfiguration.JNRConfiguration;
 import net.kitpvp.plugins.arcade.game.jnr.JNRLevel;
 import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
 import net.kitpvp.plugins.kitpvp.modules.listener.listeners.Listener;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
 import net.kitpvp.plugins.kitpvpcore.user.User;
+import net.kitpvp.plugins.kitpvpcore.utils.SpigotUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 @RequiredArgsConstructor
@@ -34,13 +36,34 @@ public class GameplayListener implements Listener {
 
     @ArcadeEvent(category = ArcadeCategory.JNR)
     public void onEntityDamage(EntityDamageEvent event, User user) {
+        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+            return;
+        }
+
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             event.setCancelled(true);
         }
     }
 
     @ArcadeEvent(category = ArcadeCategory.JNR)
+    public void onItemDrop(PlayerDropItemEvent event, User user) {
+        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @ArcadeEvent(category = ArcadeCategory.JNR)
+    public void onBlockPlaceEvent(BlockPlaceEvent event, User user) {
+        event.setCancelled(true);
+    }
+
+    @ArcadeEvent(category = ArcadeCategory.JNR)
     public void onPlayerMove(PlayerMoveEvent event) {
+        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+            return;
+        }
+
         ArcadeUser arcadeUser = ArcadeUser.getUser(event.getPlayer());
 
         Block standingOn = event.getTo().getBlock().getRelative(BlockFace.DOWN);
@@ -68,24 +91,26 @@ public class GameplayListener implements Listener {
         JNRLevel jnrLevel = JNRLevel.levelByJumps(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COUNT));
         Block generatedBlock = this.generateSafeLocation(currentBlock.getLocation(), jnrLevel).getBlock();
 
-        generatedBlock.setType(Material.STAINED_GLASS);
-        generatedBlock.setData(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COLOR).getDyeData());
+        SpigotUtils.runSyncDelayed(() -> {
+            generatedBlock.setType(Material.STAINED_GLASS);
+            generatedBlock.setData(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COLOR).getDyeData());
 
-        if (blockHistory.size() > 2) {
-            blockHistory.get(1).setType(Material.AIR);
-            blockHistory.remove(1);
-        }
+            if (blockHistory.size() > 2) {
+                blockHistory.get(1).setType(Material.AIR);
+                blockHistory.remove(1);
+            }
 
-        // update player attributes
-        blockHistory.add(currentBlock);
-        currentSessionBlock.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, generatedBlock);
-        currentSessionBlock.setAttr(ArcadeAttributes.JNR_BLOCK_HISTORY, blockHistory);
-        currentSessionBlock.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, ArcadeAttributes.COUNT_UP);
+            // update player attributes
+            blockHistory.add(currentBlock);
+            currentSessionBlock.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, generatedBlock);
+            currentSessionBlock.setAttr(ArcadeAttributes.JNR_BLOCK_HISTORY, blockHistory);
+            currentSessionBlock.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, ArcadeAttributes.COUNT_UP);
+        }, (long) currentSessionBlock.getAttr(ArcadeAttributes.CHECKPOINT_COUNT) *
+            this.arcadePlugin.getGame().getConfiguration().getJnrConfiguration().getCheckpointDelay());
     }
 
     //TODO: Check if generated jumps match the level
     private Location generateLocation(Location sourceLocation, JNRLevel level) {
-
         int height = 1;
 
         if (level.ordinal() > JNRLevel.EASY.ordinal()) {

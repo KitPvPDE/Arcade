@@ -8,4 +8,15 @@ arcade:
   jnr:
     spawn: "128,4,1238"
     start: "128,3,1238"
-    deathmatch: "100,4,1238"
+    checkpoint:
+      delay: 10 #ticks
+    checkpoints:
+      - 7
+      - 17
+      - 24
+      - 33
+    deathmatch:
+      spawns:
+        - "100,4,1238"
+      fallback:
+        spawn: "100,4, 1200"

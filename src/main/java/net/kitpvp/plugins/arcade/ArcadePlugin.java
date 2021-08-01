@@ -8,6 +8,7 @@ import net.kitpvp.plugins.arcade.factory.ArcadeListenerFactory;
 import net.kitpvp.plugins.arcade.game.ArcadeGame;
 import net.kitpvp.plugins.arcade.game.status.LobbyStatus;
 import net.kitpvp.plugins.kitpvp.modules.listener.register.GlobalEventRegister;
+import net.kitpvp.plugins.kitpvp.modules.session.GlobalSession;
 import net.kitpvp.plugins.kitpvpcore.KitPvPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,9 @@ public class ArcadePlugin extends JavaPlugin {
 
     @Getter
     private static ArcadePlugin plugin;
+
+    @Getter
+    private GlobalSession globalSession;
 
     @Getter
     private KitPvPCore core;
@@ -48,6 +52,7 @@ public class ArcadePlugin extends JavaPlugin {
         this.core.getListenerRegister().registerListenersRecursive("net.kitpvp.plugins.arcade.listener", this);
 
         KitPvPCore.getInstance().setServerStatus(ServerStatus.AVAILABLE);
+        this.globalSession = new GlobalSession();
     }
 
     @Override

@@ -1,16 +1,16 @@
 package net.kitpvp.plugins.arcade.game;
 
+import static net.kitpvp.plugins.kitpvpcore.utils.YamlUtils.locationFromConfig;
+
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
 import net.kitpvp.plugins.kitpvpcore.utils.SpigotUtils;
-import net.kitpvp.plugins.kitpvpcore.utils.YamlUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.util.Vector;
-
-import static net.kitpvp.plugins.kitpvpcore.utils.YamlUtils.locationFromConfig;
-import static net.kitpvp.plugins.kitpvpcore.utils.YamlUtils.vectorFromConfig;
 
 public class ArcadeConfiguration {
 
@@ -35,21 +35,29 @@ public class ArcadeConfiguration {
         this.jnrConfiguration = new JNRConfiguration(plugin);
     }
 
+    @Getter
     public static class JNRConfiguration {
 
-        @Getter
-        private final Location jnrStart, jnrSpawn;
-        @Getter
+        private final Location jnrStart;
+        private final Location jnrSpawn;
+        private final Location deathMatchFallBackSpawn;
+        private final List<Location> deathMatchSpawns;
         private final int jumpTime;
-        @Getter
+        private final int checkpointDelay;
         private final boolean colorBlocks;
 
         public JNRConfiguration(ArcadePlugin plugin) {
             FileConfiguration configuration = plugin.getConfig();
 
-            this.jnrStart = locationFromConfig(configuration, "arcade.jnr.start", Bukkit.getWorlds().get(0));
-            this.jnrSpawn = locationFromConfig(configuration, "arcade.jnr.spawn", Bukkit.getWorlds().get(0));
+            World world = Bukkit.getWorlds().get(0);
+
+            this.jnrStart = locationFromConfig(configuration, "arcade.jnr.start", world);
+            this.jnrSpawn = locationFromConfig(configuration, "arcade.jnr.spawn", world);
+            this.deathMatchFallBackSpawn = locationFromConfig(configuration, "arcade.jnr.deathmatch.fallback.spawn", world);
+            this.deathMatchSpawns = configuration.getStringList("arcade.jnr.deathmatch.spawns").stream()
+                .map(input -> SpigotUtils.locationFromString(input, world)).collect(Collectors.toList());
             this.jumpTime = configuration.getInt("arcade.jnr.jumpTime", 300);
+            this.checkpointDelay = configuration.getInt("arcade.jnr.checkpoint.delay", 10);
             this.colorBlocks = configuration.getBoolean("arcade.jnr.colorBlocksForEachPlayer", true);
         }
 
