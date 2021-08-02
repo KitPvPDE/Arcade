@@ -10,6 +10,10 @@ import net.kitpvp.plugins.arcade.factory.ArcadeEvent;
 import net.kitpvp.plugins.arcade.game.ArcadeConfiguration.JNRConfiguration;
 import net.kitpvp.plugins.arcade.game.jnr.JNRLevel;
 import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
+import net.kitpvp.plugins.kitpvp.modules.items.ClickableItem;
+import net.kitpvp.plugins.kitpvp.modules.items.ClickableItemListener;
+import net.kitpvp.plugins.kitpvp.modules.listener.GlobalEvent;
+import net.kitpvp.plugins.kitpvp.modules.listener.annotation.Debug;
 import net.kitpvp.plugins.kitpvp.modules.listener.listeners.Listener;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
 import net.kitpvp.plugins.kitpvpcore.user.User;
@@ -21,6 +25,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 @RequiredArgsConstructor
@@ -199,5 +204,18 @@ public class GameplayListener implements Listener {
             return false;
         }
         return true;
+    }
+
+    @Debug
+    public static class ArcadeItemListener extends ClickableItemListener {
+
+        public ArcadeItemListener(ClickableItem item) {
+            super(item);
+        }
+
+        @GlobalEvent
+        public void onInteract(PlayerInteractEvent event) {
+            this.checkEvent(event, User.getUser(event.getPlayer()));
+        }
     }
 }
