@@ -9,10 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 @RequiredArgsConstructor
 public class GameListener implements Listener {
@@ -61,5 +58,11 @@ public class GameListener implements Listener {
     public void handleItemDrop(PlayerDropItemEvent event) {
         User user = User.getUser(event.getPlayer());
         this.plugin.getEventRegister().callEvent(PlayerDropItemEvent.class, event, user, this.plugin.getGame().getState());
+    }
+
+    @EventHandler
+    @Calls(PlayerInteractEvent.class)
+    public void handleInteract(PlayerInteractEvent event) {
+        this.plugin.getEventRegister().callEvent(PlayerInteractEvent.class, event, event.getPlayer(), this.plugin.getGame().getState());
     }
 }

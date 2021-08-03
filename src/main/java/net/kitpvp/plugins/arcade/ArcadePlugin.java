@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ArcadePlugin extends JavaPlugin {
 
     @Getter
-    private static ArcadePlugin plugin;
+    protected static ArcadePlugin plugin;
 
     @Getter
     private GlobalSession globalSession;
