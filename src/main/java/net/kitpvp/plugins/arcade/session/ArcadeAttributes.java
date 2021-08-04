@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
 import net.kitpvp.network.namespace.NamespacedKey;
+import net.kitpvp.plugins.arcade.util.Pair;
 import net.kitpvp.plugins.kitpvp.modules.session.attribute.Attribute;
 import net.kitpvp.plugins.kitpvp.modules.session.attribute.BooleanAttribute;
 import net.kitpvp.plugins.kitpvp.modules.session.attribute.IntAttribute;
@@ -19,9 +20,10 @@ public interface ArcadeAttributes {
         NamespacedKey.key("jnr:active_block"), null);
     Attribute<List<Block>> JNR_BLOCK_HISTORY = Attribute.attribute(NamespacedKey.key("jnr:block_history"),
         ArrayList::new);
+    BooleanAttribute JNR_LOCKED = BooleanAttribute.attribute(NamespacedKey.key("jnr:block_locked"), false);
     Attribute<DyeColor> JNR_BLOCK_COLOR = Attribute.attribute(NamespacedKey.key("jnr:block_color"), DyeColor.WHITE);
     IntAttribute JNR_BLOCK_COUNT = IntAttribute.attribute(NamespacedKey.key("jnr:block_count"));
-    Attribute<Block> JNR_LAST_CHECKPOINT = Attribute.attribute(NamespacedKey.key("jnr:last_checkpoint"), null);
+    Attribute<Pair<Block, Integer>> JNR_LAST_CHECKPOINT = Attribute.attribute(NamespacedKey.key("jnr:last_checkpoint"), null);
     IntAttribute CHECKPOINT_COUNT = IntAttribute.attribute(NamespacedKey.key("jnr:checkpoints"), 0);
     BooleanAttribute JNR_DEATHMATCH = BooleanAttribute.attribute(NamespacedKey.key("jnr:deathmatch"), false);
 

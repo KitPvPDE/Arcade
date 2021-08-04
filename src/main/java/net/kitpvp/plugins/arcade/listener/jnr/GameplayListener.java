@@ -10,6 +10,7 @@ import net.kitpvp.plugins.arcade.factory.ArcadeEvent;
 import net.kitpvp.plugins.arcade.game.ArcadeConfiguration.JNRConfiguration;
 import net.kitpvp.plugins.arcade.game.jnr.JNRLevel;
 import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
+import net.kitpvp.plugins.arcade.util.Pair;
 import net.kitpvp.plugins.kitpvp.modules.items.ClickableItem;
 import net.kitpvp.plugins.kitpvp.modules.items.ClickableItemListener;
 import net.kitpvp.plugins.kitpvp.modules.listener.GlobalEvent;
@@ -18,6 +19,7 @@ import net.kitpvp.plugins.kitpvp.modules.listener.listeners.Listener;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
 import net.kitpvp.plugins.kitpvpcore.user.User;
 import net.kitpvp.plugins.kitpvpcore.utils.SpigotUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -72,15 +74,55 @@ public class GameplayListener implements Listener {
         ArcadeUser arcadeUser = ArcadeUser.getUser(event.getPlayer());
 
         Block standingOn = event.getTo().getBlock().getRelative(BlockFace.DOWN);
-        Block generated = arcadeUser.getSession(ArcadeCategory.JNR).getAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK);
+
+        SessionBlock jnrSession = arcadeUser.getSession(ArcadeCategory.JNR);
+
+        Block generated = jnrSession.getAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK);
 
         if (generated != null) {
-            if (standingOn.getY() < generated.getY() && standingOn.getType() != Material.AIR) {
-                // player fell down
+            if (standingOn.getY() < generated.getY() - 3 && standingOn.getType() != Material.AIR) {
+                if (jnrSession.getAttr(ArcadeAttributes.JNR_LAST_CHECKPOINT) == null) {
+                    jnrSession.getAttr(ArcadeAttributes.JNR_BLOCK_HISTORY).removeIf(block -> {
+                        block.setType(Material.AIR);
+                        return true;
+                    });
+                    jnrSession.getAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK).setType(Material.AIR);
+
+                    //TODO: choose a new spawn for the player
+                    Location startLocation = this.arcadePlugin.getGame().getConfiguration().getJnrConfiguration()
+                        .getJnrStart();
+                    event.getPlayer()
+                        .teleport(startLocation);
+
+                    // reset the done jumps
+                    jnrSession.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, startLocation.getBlock());
+                    jnrSession.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, 0);
+                } else {
+                    Pair<Block, Integer> lastCheckpoint = jnrSession.getAttr(ArcadeAttributes.JNR_LAST_CHECKPOINT);
+
+                    jnrSession.getAttr(ArcadeAttributes.JNR_BLOCK_HISTORY).removeIf(block -> {
+                        block.setType(Material.AIR);
+                        return true;
+                    });
+                    jnrSession.getAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK).setType(Material.AIR);
+
+                    // replace the old block
+                    lastCheckpoint.first.setType(Material.STAINED_GLASS);
+                    lastCheckpoint.first.setData(jnrSession.getAttr(ArcadeAttributes.JNR_BLOCK_COLOR).getDyeData());
+                    event.getPlayer().teleport(lastCheckpoint.first.getRelative(BlockFace.UP).getLocation());
+
+                    // reset the done jumps
+                    jnrSession.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, lastCheckpoint.first);
+                    jnrSession.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, lastCheckpoint.second);
+                }
                 return;
             }
             if (standingOn.getLocation().toVector().equals(generated.getLocation().toVector())) {
                 //generate new block for the player
+                if (arcadeUser.getSession(ArcadeCategory.JNR).getAttr(ArcadeAttributes.JNR_LOCKED)) {
+                    return;
+                }
+
                 this.generateNewJump(arcadeUser);
             }
         }
@@ -96,6 +138,11 @@ public class GameplayListener implements Listener {
         JNRLevel jnrLevel = JNRLevel.levelByJumps(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COUNT));
         Block generatedBlock = this.generateSafeLocation(currentBlock.getLocation(), jnrLevel).getBlock();
 
+        currentSessionBlock.setAttr(ArcadeAttributes.JNR_LOCKED, true);
+
+        long delay = (long) currentSessionBlock.getAttr(ArcadeAttributes.CHECKPOINT_COUNT) *
+            this.arcadePlugin.getGame().getConfiguration().getJnrConfiguration().getCheckpointDelay();
+
         SpigotUtils.runSyncDelayed(() -> {
             generatedBlock.setType(Material.STAINED_GLASS);
             generatedBlock.setData(currentSessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COLOR).getDyeData());
@@ -110,8 +157,8 @@ public class GameplayListener implements Listener {
             currentSessionBlock.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, generatedBlock);
             currentSessionBlock.setAttr(ArcadeAttributes.JNR_BLOCK_HISTORY, blockHistory);
             currentSessionBlock.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, ArcadeAttributes.COUNT_UP);
-        }, (long) currentSessionBlock.getAttr(ArcadeAttributes.CHECKPOINT_COUNT) *
-            this.arcadePlugin.getGame().getConfiguration().getJnrConfiguration().getCheckpointDelay());
+            currentSessionBlock.setAttr(ArcadeAttributes.JNR_LOCKED, false);
+        }, delay);
     }
 
     //TODO: Check if generated jumps match the level
