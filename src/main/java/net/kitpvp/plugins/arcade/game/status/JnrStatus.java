@@ -22,6 +22,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 public class JnrStatus extends InGameStatus {
 
@@ -64,7 +65,7 @@ public class JnrStatus extends InGameStatus {
 
     @Override
     protected void tickSecond(int j) {
-        if(!this.getGame().getPlugin().getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+        if (!this.getGame().getPlugin().getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
             if (j == 0) {
                 Chat.localeAnnounce(ChatFormats.ARCADE, "arcade.jnr.deathmatch.now");
                 this.startDeathMatch();
@@ -101,6 +102,14 @@ public class JnrStatus extends InGameStatus {
                 player.teleport(fallbackLocation, TeleportCause.PLUGIN);
             }
 
+            int doneJumps = ArcadeUser.getUser(player).getSession(ArcadeCategory.JNR)
+                .getAttr(ArcadeAttributes.JNR_BLOCK_COUNT);
+
+            player.getInventory().addItem(
+                new ItemStack(Material.RED_MUSHROOM, doneJumps),
+                new ItemStack(Material.BOWL, doneJumps),
+                new ItemStack(Material.BROWN_MUSHROOM, doneJumps)
+            );
             player.getInventory().remove(JNR.CHECKPOINT.getItem(player));
         }
     }
