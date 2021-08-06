@@ -36,6 +36,6 @@ public class ArcadeUser extends User {
     }
 
     public Session getSession() {
-        return session;
+        return this.session;
     }
 }

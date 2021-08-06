@@ -22,11 +22,11 @@ public class GameplayListener implements Listener {
         if (this.plugin.getGame().getState() != ArcadeCategory.LOBBY) {
             if (!user.isInVanish()) {
                 event.getPlayer().kickPlayer("You cannot join running games");
-                return;
             }
-        } else {
-            this.plugin.getGame().addParticipant(user.getPlayerId());
+            return;
         }
+        this.plugin.getGame().addParticipant(user.getPlayerId());
+
     }
 
     @GlobalEvent

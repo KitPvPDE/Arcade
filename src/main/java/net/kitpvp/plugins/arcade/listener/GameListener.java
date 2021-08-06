@@ -11,6 +11,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 
+/**
+ * Class to redirect bukkit listeners
+ */
 @RequiredArgsConstructor
 public class GameListener implements Listener {
 

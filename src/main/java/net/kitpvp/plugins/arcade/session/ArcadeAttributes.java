@@ -13,18 +13,24 @@ import org.bukkit.block.Block;
 
 public interface ArcadeAttributes {
 
+    // just count up
     IntUnaryOperator COUNT_UP = (i) -> ++i;
 
-    // JNR
+    // stores the next block the player has to reach
     Attribute<Block> JNR_ACTIVE_BLOCK = Attribute.attribute(
-        NamespacedKey.key("jnr:active_block"), null);
+        NamespacedKey.key("jnr:active_block"), null); //TODO: merge JNR_ACTIVE_BLOCK and JNR_BLOCK_HISTORY
+    // stores all blocks the player has done
     Attribute<List<Block>> JNR_BLOCK_HISTORY = Attribute.attribute(NamespacedKey.key("jnr:block_history"),
         ArrayList::new);
+    // looks the session so that we don't generate more than one new block
     BooleanAttribute JNR_LOCKED = BooleanAttribute.attribute(NamespacedKey.key("jnr:block_locked"), false);
+    // stores the players glass color
     Attribute<DyeColor> JNR_BLOCK_COLOR = Attribute.attribute(NamespacedKey.key("jnr:block_color"), DyeColor.WHITE);
+    // stores how many blocks the player reached
     IntAttribute JNR_BLOCK_COUNT = IntAttribute.attribute(NamespacedKey.key("jnr:block_count"));
-    Attribute<Pair<Block, Integer>> JNR_LAST_CHECKPOINT = Attribute.attribute(NamespacedKey.key("jnr:last_checkpoint"), null);
-    IntAttribute CHECKPOINT_COUNT = IntAttribute.attribute(NamespacedKey.key("jnr:checkpoints"), 0);
+    // stores all checkpoints of the player
+    Attribute<List<Pair<Block, Integer>>> JNR_CHECKPOINT_HISTORY = Attribute.attribute(NamespacedKey.key("jnr:checkpoint_history"), ArrayList::new);
+    // Stores if the game is in the deathmatch, this uses the global session
     BooleanAttribute JNR_DEATHMATCH = BooleanAttribute.attribute(NamespacedKey.key("jnr:deathmatch"), false);
 
 

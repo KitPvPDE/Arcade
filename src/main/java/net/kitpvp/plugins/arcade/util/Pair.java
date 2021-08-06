@@ -1,11 +1,13 @@
 package net.kitpvp.plugins.arcade.util;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Getter
 public class Pair<F, S> {
 
-    public final F first;
-    public final S second;
+    private final F first;
+    private final S second;
 
 }
