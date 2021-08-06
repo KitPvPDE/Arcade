@@ -33,6 +33,14 @@ public class CheckpointHelper {
         if (checkpoint == null) {
             return;
         }
+        // check if it's not the first checkpoint
+        if (checkpointNumber != 0) {
+            Checkpoint previousCheckpoint = Checkpoint.byOrdinal(checkpointNumber - 1);
+            // should never be null but yeah
+            if(previousCheckpoint != null) {
+                player.getInventory().removeItem(previousCheckpoint.getItems());
+            }
+        }
         // add all items corresponding to the checkpoint
         player.getInventory().addItem(checkpoint.getItems());
     }
