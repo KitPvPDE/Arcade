@@ -7,10 +7,13 @@ import net.kitpvp.plugins.arcade.item.Checkpoint;
 import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
 import net.kitpvp.plugins.arcade.util.Pair;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
+import net.kitpvp.plugins.kitpvpcore.lavendle.LavendleItem;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 public class CheckpointHelper {
 
@@ -38,7 +41,11 @@ public class CheckpointHelper {
             Checkpoint previousCheckpoint = Checkpoint.byOrdinal(checkpointNumber - 1);
             // should never be null but yeah
             if(previousCheckpoint != null) {
-                player.getInventory().removeItem(previousCheckpoint.getItems());
+                for (LavendleItem item : previousCheckpoint.getItems()) {
+                    if(!item.hasItemMeta() || !item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                        player.getInventory().removeItem(previousCheckpoint.getItems());
+                    }
+                }
             }
         }
         // add all items corresponding to the checkpoint

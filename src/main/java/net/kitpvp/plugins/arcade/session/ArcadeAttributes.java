@@ -18,7 +18,7 @@ public interface ArcadeAttributes {
 
     // stores the next block the player has to reach
     Attribute<Block> JNR_ACTIVE_BLOCK = Attribute.attribute(
-        NamespacedKey.key("jnr:active_block"), null); //TODO: merge JNR_ACTIVE_BLOCK and JNR_BLOCK_HISTORY
+        NamespacedKey.key("jnr:active_block"), null);
     // stores all blocks the player has done
     Attribute<List<Block>> JNR_BLOCK_HISTORY = Attribute.attribute(NamespacedKey.key("jnr:block_history"),
         ArrayList::new);

@@ -10,6 +10,7 @@ import net.kitpvp.plugins.kitpvpcore.lavendle.LavendleItem;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 
 public class Items {
 
@@ -48,7 +49,7 @@ public class Items {
             new LavendleItem(Material.GOLD_LEGGINGS),
             new LavendleItem(Material.GOLD_BOOTS),
             new LavendleItem(Material.STONE_SWORD),
-            new LavendleItem(Material.TNT, 3)
+            new LavendleItem(Material.TNT, 3).flags(ItemFlag.HIDE_ENCHANTS)
         };
         LavendleItem[] CHECKPOINT_2 = new LavendleItem[]{
             new LavendleItem(Material.CHAINMAIL_HELMET),
@@ -56,7 +57,7 @@ public class Items {
             new LavendleItem(Material.CHAINMAIL_LEGGINGS),
             new LavendleItem(Material.CHAINMAIL_BOOTS),
             new LavendleItem(Material.IRON_SWORD),
-            new LavendleItem(Material.WEB, 4)
+            new LavendleItem(Material.WEB, 4).flags(ItemFlag.HIDE_ENCHANTS)
         };
         LavendleItem[] CHECKPOINT_3 = new LavendleItem[]{
             new LavendleItem(Material.CHAINMAIL_HELMET),
@@ -64,7 +65,7 @@ public class Items {
             new LavendleItem(Material.CHAINMAIL_LEGGINGS),
             new LavendleItem(Material.CHAINMAIL_BOOTS),
             new LavendleItem(Material.DIAMOND_SWORD),
-            new LavendleItem(Material.FLINT_AND_STEEL)
+            new LavendleItem(Material.FLINT_AND_STEEL).flags(ItemFlag.HIDE_ENCHANTS)
         };
         LavendleItem[] CHECKPOINT_4 = new LavendleItem[]{
             new LavendleItem(Material.CHAINMAIL_HELMET),
