@@ -4,8 +4,7 @@ import net.kitpvp.plugins.kitpvp.modules.listener.AbstractStageable;
 
 public enum ArcadeCategory implements AbstractStageable {
 
-    LOBBY, JNR, MUSHROOM, LABYRINTH
-    ;
+    LOBBY, JNR, MUSHROOM, LABYRINTH;
 
     @Override
     public int id() {

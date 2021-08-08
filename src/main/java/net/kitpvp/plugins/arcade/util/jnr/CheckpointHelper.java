@@ -13,13 +13,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
 
 public class CheckpointHelper {
 
     public static boolean hasVisitedCheckpoint(SessionBlock sessionBlock, int checkpointNumber) {
         // retrieve all checkpoints that this session has seen
-        List<Pair<Block, Integer>> checkpoints = sessionBlock.getAttr(ArcadeAttributes.JNR_CHECKPOINT_HISTORY);
+        List<Pair<Block, Integer>> checkpoints = sessionBlock.getAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
 
         for (Pair<Block, Integer> checkpoint : checkpoints) {
             // check if any of the block count of the checkpoints match the searched one
@@ -57,7 +56,7 @@ public class CheckpointHelper {
 
         // retrieve all checkpoints that this session has seen
         List<Pair<Block, Integer>> checkpointHistory = sessionBlock.getAttr(
-            ArcadeAttributes.JNR_CHECKPOINT_HISTORY);
+            ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
 
         // take the last checkpoint of the player
         Pair<Block, Integer> lastCheckPoint = lastOrNull(checkpointHistory);
@@ -78,16 +77,16 @@ public class CheckpointHelper {
         Chat.localeResponse(player, "arcade.jnr.checkpoint.set");
 
         // set the new checkpoint into the attributes
-        setNewCheckpoint(targetCheckpoint, sessionBlock.getAttr(ArcadeAttributes.JNR_BLOCK_COUNT), sessionBlock);
+        setNewCheckpoint(targetCheckpoint, sessionBlock.getAttr(ArcadeAttributes.JNR.BLOCK_COUNT), sessionBlock);
     }
 
     public static void setNewCheckpoint(Block checkpoint, int blockCount, SessionBlock sessionBlock) {
         // retrieve all checkpoints that this session has seen
-        List<Pair<Block, Integer>> checkpoints = sessionBlock.getAttr(ArcadeAttributes.JNR_CHECKPOINT_HISTORY);
+        List<Pair<Block, Integer>> checkpoints = sessionBlock.getAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
         // add the new checkpoint into the history
         checkpoints.add(new Pair<>(checkpoint, blockCount));
         // update the list in the attributes
-        sessionBlock.setAttr(ArcadeAttributes.JNR_CHECKPOINT_HISTORY, checkpoints);
+        sessionBlock.setAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY, checkpoints);
     }
 
     private static <E> E lastOrNull(List<E> list) {

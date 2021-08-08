@@ -5,6 +5,7 @@ import net.kitpvp.gameapi.Game;
 import net.kitpvp.plugins.arcade.ArcadeCategory;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
 import net.kitpvp.plugins.arcade.game.status.JnrStatus;
+import net.kitpvp.plugins.arcade.game.status.SpeedMushroomStatus;
 import net.kitpvp.plugins.kitpvp.modules.listener.register.GlobalEventRegister;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,8 @@ public class ArcadeGame extends Game<ArcadeCategory> {
         this.plugin = plugin;
         this.configuration = new ArcadeConfiguration(plugin);
         this.modeQueue = new ConcurrentLinkedQueue<>();
-        this.modeQueue.add(new JnrStatus(this, this.configuration.getJnrConfiguration().getJumpTime())); // for now TODO load randomized subset of all modes
+      //  this.modeQueue.add(new JnrStatus(this, this.configuration.getJnrConfiguration().getJumpTime())); // for now TODO load randomized subset of all modes
+        this.modeQueue.add(new SpeedMushroomStatus(this));
     }
 
     public boolean switchStatus(@NotNull ArcadeGameStatus newStatus) {

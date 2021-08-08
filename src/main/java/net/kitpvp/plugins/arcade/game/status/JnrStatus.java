@@ -20,8 +20,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 public class JnrStatus extends InGameStatus {
@@ -45,17 +43,20 @@ public class JnrStatus extends InGameStatus {
     protected void onEnter() {
         super.onEnter();
 
+        // for now every player starts at the same point
         Block startBlock = this.configuration.getJnrStart().getBlock();
         startBlock.setType(Material.GOLD_BLOCK);
         for (Player player : super.getGame().getParticipants()) {
-            player.teleport(this.configuration.getJnrSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.teleport(this.configuration.getJnrSpawn());
 
             ArcadeUser user = ArcadeUser.getUser(player);
             SessionBlock block = user.getSession(ArcadeCategory.JNR);
-            block.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, startBlock);
+            // set the start block for the player
+            block.setAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK, startBlock);
 
             if (this.configuration.isColorBlocks()) {
-                block.setAttr(ArcadeAttributes.JNR_BLOCK_COLOR, DYE_COLORS[RANDOM.nextInt(DYE_COLORS.length)]);
+                // choose a random color and assign it to the player
+                block.setAttr(ArcadeAttributes.JNR.BLOCK_COLOR, DYE_COLORS[RANDOM.nextInt(DYE_COLORS.length)]);
             }
 
             player.getInventory().clear();
@@ -65,7 +66,7 @@ public class JnrStatus extends InGameStatus {
 
     @Override
     protected void tickSecond(int j) {
-        if (!this.getGame().getPlugin().getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+        if (!this.getGame().getPlugin().getGlobalSession().getAttr(ArcadeAttributes.JNR.DEATHMATCH)) {
             if (j == 0) {
                 Chat.localeAnnounce(ChatFormats.ARCADE, "arcade.jnr.deathmatch.now");
                 this.startDeathMatch();
@@ -85,8 +86,8 @@ public class JnrStatus extends InGameStatus {
     }
 
     private void startDeathMatch() {
-
-        this.getGame().getPlugin().getGlobalSession().setAttr(ArcadeAttributes.JNR_DEATHMATCH, true);
+        // set the deathmatch in the global session, to prevent some events
+        this.getGame().getPlugin().getGlobalSession().setAttr(ArcadeAttributes.JNR.DEATHMATCH, true);
 
         GameSettings.setDamageAllowed(true);
         GameSettings.setFoodChangeAllowed(true);
@@ -97,14 +98,15 @@ public class JnrStatus extends InGameStatus {
         for (int i = 0; i < participants.size(); i++) {
             Player player = participants.get(i);
             if (spawns.size() - 1 >= i) {
-                player.teleport(spawns.get(i), TeleportCause.PLUGIN);
+                player.teleport(spawns.get(i));
             } else {
-                player.teleport(fallbackLocation, TeleportCause.PLUGIN);
+                player.teleport(fallbackLocation);
             }
 
             int doneJumps = ArcadeUser.getUser(player).getSession(ArcadeCategory.JNR)
-                .getAttr(ArcadeAttributes.JNR_BLOCK_COUNT);
+                .getAttr(ArcadeAttributes.JNR.BLOCK_COUNT);
 
+            // give the player the amount of done jumps in recraft
             player.getInventory().addItem(
                 new ItemStack(Material.RED_MUSHROOM, doneJumps),
                 new ItemStack(Material.BOWL, doneJumps),

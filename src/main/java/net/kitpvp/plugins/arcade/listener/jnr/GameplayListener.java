@@ -13,7 +13,6 @@ import net.kitpvp.plugins.arcade.util.jnr.LocationGenerator;
 import net.kitpvp.plugins.kitpvp.modules.items.ClickableItem;
 import net.kitpvp.plugins.kitpvp.modules.items.ClickableItemListener;
 import net.kitpvp.plugins.kitpvp.modules.listener.GlobalEvent;
-import net.kitpvp.plugins.kitpvp.modules.listener.annotation.Debug;
 import net.kitpvp.plugins.kitpvp.modules.listener.listeners.Listener;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
 import net.kitpvp.plugins.kitpvpcore.user.User;
@@ -40,7 +39,7 @@ public class GameplayListener implements Listener {
     @ArcadeEvent(category = ArcadeCategory.JNR)
     public void onEntityDamage(EntityDamageEvent event, User user) {
         // we want to enable fall damage in the deathmatch again
-        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR.DEATHMATCH)) {
             return;
         }
 
@@ -52,7 +51,7 @@ public class GameplayListener implements Listener {
     @ArcadeEvent(category = ArcadeCategory.JNR)
     public void onItemDrop(PlayerDropItemEvent event, User user) {
         // we don't need to cancel this in the deathmatch as the player is allowed to drop things.
-        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR.DEATHMATCH)) {
             return;
         }
         event.setCancelled(true);
@@ -67,7 +66,7 @@ public class GameplayListener implements Listener {
     @ArcadeEvent(category = ArcadeCategory.JNR)
     public void onPlayerMove(PlayerMoveEvent event) {
         // we don't need these checks in the deathmatch anymore
-        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR_DEATHMATCH)) {
+        if (this.arcadePlugin.getGlobalSession().getAttr(ArcadeAttributes.JNR.DEATHMATCH)) {
             return;
         }
 
@@ -77,21 +76,21 @@ public class GameplayListener implements Listener {
 
         SessionBlock jnrSession = arcadeUser.getSession(ArcadeCategory.JNR);
 
-        Block generated = jnrSession.getAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK);
+        Block generated = jnrSession.getAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK);
 
         if (generated != null) {
             // check if the player fell down
             if (standingOn.getY() < generated.getY() - 2 && standingOn.getType() != Material.AIR) {
                 List<Pair<Block, Integer>> checkpointHistory = jnrSession.getAttr(
-                    ArcadeAttributes.JNR_CHECKPOINT_HISTORY);
+                    ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
 
                 // remove all blocks from the players' history as we generate new ones
-                jnrSession.getAttr(ArcadeAttributes.JNR_BLOCK_HISTORY).removeIf(block -> {
+                jnrSession.getAttr(ArcadeAttributes.JNR.BLOCK_HISTORY).removeIf(block -> {
                     block.setType(Material.AIR);
                     return true;
                 });
                 // set the current he had to reach also to air
-                jnrSession.getAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK).setType(Material.AIR);
+                jnrSession.getAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK).setType(Material.AIR);
 
                 // the player has no checkpoints set or reached
                 if (checkpointHistory.isEmpty()) {
@@ -103,9 +102,9 @@ public class GameplayListener implements Listener {
                         .teleport(startLocation);
 
                     // set the new block to reach for the player to the start block
-                    jnrSession.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, startLocation.getBlock());
+                    jnrSession.setAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK, startLocation.getBlock());
                     // reset the count of jumps he has completed
-                    jnrSession.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, 0);
+                    jnrSession.setAttr(ArcadeAttributes.JNR.BLOCK_COUNT, 0);
                 } else {
                     // the newest checkpoint of the player
                     Pair<Block, Integer> lastCheckpoint = checkpointHistory.get(checkpointHistory.size() - 1);
@@ -115,23 +114,23 @@ public class GameplayListener implements Listener {
 
                     // set the block again to stained-glass and color it for the player
                     checkpointBlock.setType(Material.STAINED_GLASS);
-                    checkpointBlock.setData(jnrSession.getAttr(ArcadeAttributes.JNR_BLOCK_COLOR).getDyeData());
+                    checkpointBlock.setData(jnrSession.getAttr(ArcadeAttributes.JNR.BLOCK_COLOR).getDyeData());
 
                     // teleport the player to his last checkpoint
                     event.getPlayer().teleport(checkpointBlock.getRelative(BlockFace.UP).getLocation());
 
                     // set the new block toi reach to the checkpoints block
-                    jnrSession.setAttr(ArcadeAttributes.JNR_ACTIVE_BLOCK, lastCheckpoint.getFirst());
+                    jnrSession.setAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK, lastCheckpoint.getFirst());
 
                     // reset the count of jumps the player completed to those that he completed to reach this checkpoint
-                    jnrSession.setAttr(ArcadeAttributes.JNR_BLOCK_COUNT, lastCheckpoint.getSecond());
+                    jnrSession.setAttr(ArcadeAttributes.JNR.BLOCK_COUNT, lastCheckpoint.getSecond());
                 }
                 return;
             }
             // check if the player is on the target block he has to reach
             if (standingOn.getLocation().toVector().equals(generated.getLocation().toVector())) {
                 // check if there is no other generation running already
-                if (arcadeUser.getSession(ArcadeCategory.JNR).getAttr(ArcadeAttributes.JNR_LOCKED)) {
+                if (arcadeUser.getSession(ArcadeCategory.JNR).getAttr(ArcadeAttributes.JNR.LOCKED)) {
                     return;
                 }
 
@@ -139,7 +138,7 @@ public class GameplayListener implements Listener {
                     // the needed amount of jumps for this checkpoint
                     int checkpoint = this.checkpoints.get(i);
                     // the amount of blocks the player reached
-                    int blockCount = jnrSession.getAttr(ArcadeAttributes.JNR_BLOCK_COUNT);
+                    int blockCount = jnrSession.getAttr(ArcadeAttributes.JNR.BLOCK_COUNT);
 
                     // check if the player reached the checkpoint, and he did not visit it before
                     if (blockCount == checkpoint && !CheckpointHelper.hasVisitedCheckpoint(jnrSession, checkpoint)) {
@@ -157,8 +156,6 @@ public class GameplayListener implements Listener {
         }
     }
 
-
-    @Debug
     public static class ArcadeItemListener extends ClickableItemListener {
 
         public ArcadeItemListener(ClickableItem item) {
