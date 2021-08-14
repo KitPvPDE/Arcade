@@ -43,6 +43,10 @@ public class JnrStatus extends InGameStatus {
     protected void onEnter() {
         super.onEnter();
 
+        // disable damaging other players while jumping
+        GameSettings.setFoodChangeAllowed(false);
+        GameSettings.setDamageAllowed(false);
+
         // for now every player starts at the same point
         Block startBlock = this.configuration.getJnrStart().getBlock();
         startBlock.setType(Material.GOLD_BLOCK);

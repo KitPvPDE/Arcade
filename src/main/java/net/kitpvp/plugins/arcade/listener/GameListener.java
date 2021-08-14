@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 
 /**
@@ -40,6 +41,13 @@ public class GameListener implements Listener {
             User user = User.getUser((Player) event.getEntity());
             this.plugin.getEventRegister().callEvent(EntityDamageEvent.class, event, user, this.plugin.getGame().getState());
         }
+    }
+
+    @EventHandler
+    @Calls(PlayerDeathEvent.class)
+    public void onDamage(PlayerDeathEvent event) {
+        User user = User.getUser(event.getEntity());
+        this.plugin.getEventRegister().callEvent(PlayerDeathEvent.class, event, user, this.plugin.getGame().getState());
     }
 
     @EventHandler

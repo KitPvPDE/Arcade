@@ -7,6 +7,7 @@ import net.kitpvp.plugins.arcade.ArcadeUser;
 import net.kitpvp.plugins.arcade.chat.Chat;
 import net.kitpvp.plugins.arcade.factory.ArcadeEvent;
 import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
+import net.kitpvp.plugins.arcade.session.ArcadeAttributes.JNR;
 import net.kitpvp.plugins.arcade.util.Pair;
 import net.kitpvp.plugins.arcade.util.jnr.CheckpointHelper;
 import net.kitpvp.plugins.arcade.util.jnr.LocationGenerator;
@@ -20,8 +21,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -55,6 +58,25 @@ public class GameplayListener implements Listener {
             return;
         }
         event.setCancelled(true);
+    }
+
+    @ArcadeEvent(category = ArcadeCategory.JNR)
+    public void onPlayerDeath(PlayerDeathEvent event, User user) {
+        // check if the player dies in the deathmatch, if not return
+        if (!this.arcadePlugin.getGlobalSession().getAttr(JNR.DEATHMATCH)) {
+            return;
+        }
+        Player player = event.getEntity();
+        Player killer = player.getKiller();
+
+        // check if the player kills himself, or he's killed by another player
+        if (player == killer || killer == null) {
+            Chat.localeAnnounce("arcade.jnr.deathmatch.player.death.self", player.getName());
+        } else {
+            Chat.localeAnnounce("arcade.jnr.deathmatch.player.death", player.getName(), killer.getName());
+        }
+        //TODO: spectate mode
+
     }
 
     @ArcadeEvent(category = ArcadeCategory.JNR)

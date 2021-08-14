@@ -39,10 +39,11 @@ public class CheckpointHelper {
         if (checkpointNumber != 0) {
             Checkpoint previousCheckpoint = Checkpoint.byOrdinal(checkpointNumber - 1);
             // should never be null but yeah
-            if(previousCheckpoint != null) {
+            if (previousCheckpoint != null) {
                 for (LavendleItem item : previousCheckpoint.getItems()) {
-                    if(!item.hasItemMeta() || !item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
-                        player.getInventory().removeItem(previousCheckpoint.getItems());
+                    // check if the item should be removed
+                    if (!item.hasItemMeta() || !item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS)) {
+                        player.getInventory().removeItem(item);
                     }
                 }
             }
