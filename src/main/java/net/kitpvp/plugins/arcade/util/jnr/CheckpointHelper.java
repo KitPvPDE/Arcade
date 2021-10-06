@@ -1,10 +1,11 @@
 package net.kitpvp.plugins.arcade.util.jnr;
 
 import java.util.List;
+import java.util.Map;
 import net.kitpvp.plugins.arcade.ArcadePlugin;
 import net.kitpvp.plugins.arcade.chat.Chat;
 import net.kitpvp.plugins.arcade.item.Checkpoint;
-import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
+import net.kitpvp.plugins.arcade.session.ArcadeAttributes.JNR;
 import net.kitpvp.plugins.arcade.util.Pair;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
 import net.kitpvp.plugins.kitpvpcore.lavendle.LavendleItem;
@@ -18,15 +19,8 @@ public class CheckpointHelper {
 
     public static boolean hasVisitedCheckpoint(SessionBlock sessionBlock, int checkpointNumber) {
         // retrieve all checkpoints that this session has seen
-        List<Pair<Block, Integer>> checkpoints = sessionBlock.getAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
-
-        for (Pair<Block, Integer> checkpoint : checkpoints) {
-            // check if any of the block count of the checkpoints match the searched one
-            if (checkpoint.getSecond() == checkpointNumber) {
-                return true;
-            }
-        }
-        return false;
+        Map<Integer, Block> checkpoints = sessionBlock.getAttr(JNR.CHECKPOINT_HISTORY);
+        return checkpoints.containsKey(checkpointNumber);
     }
 
     public static void applyCheckpointItems(Player player, int checkpointNumber) {
@@ -55,12 +49,8 @@ public class CheckpointHelper {
     public static void setCustomCheckpointAtCurrentLocation(Player player, SessionBlock sessionBlock) {
         Block targetCheckpoint = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
 
-        // retrieve all checkpoints that this session has seen
-        List<Pair<Block, Integer>> checkpointHistory = sessionBlock.getAttr(
-            ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
-
         // take the last checkpoint of the player
-        Pair<Block, Integer> lastCheckPoint = lastOrNull(checkpointHistory);
+        Pair<Block, Integer> lastCheckPoint = sessionBlock.getAttr(JNR.LAST_CHECKPOINT);
         // if the player tries to great a checkpoint while in air we cancel the process
         if (targetCheckpoint.getType() == Material.AIR) {
             return;
@@ -78,16 +68,18 @@ public class CheckpointHelper {
         Chat.localeResponse(player, "arcade.jnr.checkpoint.set");
 
         // set the new checkpoint into the attributes
-        setNewCheckpoint(targetCheckpoint, sessionBlock.getAttr(ArcadeAttributes.JNR.BLOCK_COUNT), sessionBlock);
+        setNewCheckpoint(targetCheckpoint, sessionBlock.getAttr(JNR.BLOCK_COUNT), sessionBlock);
     }
 
     public static void setNewCheckpoint(Block checkpoint, int blockCount, SessionBlock sessionBlock) {
         // retrieve all checkpoints that this session has seen
-        List<Pair<Block, Integer>> checkpoints = sessionBlock.getAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY);
+        Map<Integer, Block> checkpoints = sessionBlock.getAttr(JNR.CHECKPOINT_HISTORY);
         // add the new checkpoint into the history
-        checkpoints.add(new Pair<>(checkpoint, blockCount));
+        checkpoints.put(blockCount, checkpoint);
         // update the list in the attributes
-        sessionBlock.setAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY, checkpoints);
+        sessionBlock.setAttr(JNR.CHECKPOINT_HISTORY, checkpoints);
+        // set the last checkpoint of the player
+        sessionBlock.setAttr(JNR.LAST_CHECKPOINT, new Pair<>(checkpoint, blockCount));
     }
 
     private static <E> E lastOrNull(List<E> list) {

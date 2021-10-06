@@ -7,6 +7,7 @@ import net.kitpvp.plugins.kitpvpcore.user.User;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -62,6 +63,13 @@ public class GameListener implements Listener {
     public void handleBlockPlace(BlockPlaceEvent event) {
         User user = User.getUser(event.getPlayer());
         this.plugin.getEventRegister().callEvent(BlockPlaceEvent.class, event, user, this.plugin.getGame().getState());
+    }
+
+    @EventHandler
+    @Calls(BlockBreakEvent.class)
+    public void handleBlockBreak(BlockBreakEvent event) {
+        User user = User.getUser(event.getPlayer());
+        this.plugin.getEventRegister().callEvent(BlockBreakEvent.class, event, user, this.plugin.getGame().getState());
     }
 
     @EventHandler

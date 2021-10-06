@@ -51,6 +51,7 @@ public class JnrStatus extends InGameStatus {
         Block startBlock = this.configuration.getJnrStart().getBlock();
         startBlock.setType(Material.GOLD_BLOCK);
         for (Player player : super.getGame().getParticipants()) {
+            //TODO: teleport the player to a own location
             player.teleport(this.configuration.getJnrSpawn());
 
             ArcadeUser user = ArcadeUser.getUser(player);
@@ -94,7 +95,7 @@ public class JnrStatus extends InGameStatus {
         this.getGame().getPlugin().getGlobalSession().setAttr(ArcadeAttributes.JNR.DEATHMATCH, true);
 
         GameSettings.setDamageAllowed(true);
-        GameSettings.setFoodChangeAllowed(true);
+        GameSettings.setFoodChangeAllowed(false);
 
         Location fallbackLocation = this.configuration.getDeathMatchFallBackSpawn();
         List<Player> participants = this.getGame().getParticipants();
@@ -116,7 +117,8 @@ public class JnrStatus extends InGameStatus {
                 new ItemStack(Material.BOWL, doneJumps),
                 new ItemStack(Material.BROWN_MUSHROOM, doneJumps)
             );
-            player.getInventory().remove(JNR.CHECKPOINT.getItem(player));
+            // remove the checkpoint item
+            player.getInventory().removeItem(JNR.CHECKPOINT.getItem(player));
         }
     }
 }

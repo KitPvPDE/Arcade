@@ -7,6 +7,7 @@ import net.kitpvp.plugins.arcade.ArcadeUser;
 import net.kitpvp.plugins.arcade.game.ArcadeConfiguration.JNRConfiguration;
 import net.kitpvp.plugins.arcade.game.jnr.JNRLevel;
 import net.kitpvp.plugins.arcade.session.ArcadeAttributes;
+import net.kitpvp.plugins.arcade.session.ArcadeAttributes.JNR;
 import net.kitpvp.plugins.kitpvp.modules.session.SessionBlock;
 import net.kitpvp.plugins.kitpvpcore.utils.SpigotUtils;
 import org.bukkit.Location;
@@ -26,14 +27,14 @@ public class LocationGenerator {
     public static void generateNewJump(ArcadeUser arcadeUser, JNRConfiguration jnrConfiguration) {
         SessionBlock currentSessionBlock = arcadeUser.getSession(ArcadeCategory.JNR);
         // fetch the old block from the players attributes
-        Block currentBlock = currentSessionBlock.getAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK);
+        Block currentBlock = currentSessionBlock.getAttr(JNR.ACTIVE_BLOCK);
 
         // generate new block based on the level
-        JNRLevel jnrLevel = JNRLevel.levelByJumps(currentSessionBlock.getAttr(ArcadeAttributes.JNR.BLOCK_COUNT));
+        JNRLevel jnrLevel = JNRLevel.levelByJumps(currentSessionBlock.getAttr(JNR.BLOCK_COUNT));
         Block generatedBlock = generateSafeLocation(currentBlock.getLocation(), jnrLevel, jnrConfiguration).getBlock();
 
         // look the session to prevent multiple blocks
-        currentSessionBlock.setAttr(ArcadeAttributes.JNR.LOCKED, true);
+        currentSessionBlock.setAttr(JNR.LOCKED, true);
 
         // update the block in the world and the attributes of the player
         updateBlock(currentSessionBlock, generatedBlock, currentBlock, jnrConfiguration);
@@ -44,15 +45,15 @@ public class LocationGenerator {
         JNRConfiguration jnrConfiguration) {
 
         // calculate the delay in ticks (20 ticks = 1s) the player has to wait for a new block based on the amount of checkpoints he has set
-        long delay = (long) sessionBlock.getAttr(ArcadeAttributes.JNR.CHECKPOINT_HISTORY).size()
+        long delay = (long) sessionBlock.getAttr(JNR.CHECKPOINT_HISTORY).size()
             * jnrConfiguration.getCheckpointDelay();
 
         SpigotUtils.runSyncDelayed(() -> {
-            // we use stained glass and color it for each player
+            // we use stained-glass and color it for each player
             generatedBlock.setType(Material.STAINED_GLASS);
-            generatedBlock.setData(sessionBlock.getAttr(ArcadeAttributes.JNR.BLOCK_COLOR).getDyeData());
+            generatedBlock.setData(sessionBlock.getAttr(JNR.BLOCK_COLOR).getDyeData());
 
-            List<Block> blockHistory = sessionBlock.getAttr(ArcadeAttributes.JNR.BLOCK_HISTORY);
+            List<Block> blockHistory = sessionBlock.getAttr(JNR.BLOCK_HISTORY);
 
             // we want to remove the last block in the blockHistory and also hide it in the world
             if (blockHistory.size() > 2) {
@@ -63,16 +64,16 @@ public class LocationGenerator {
             blockHistory.add(currentBlock);
 
             // set the new block the player has to reach
-            sessionBlock.setAttr(ArcadeAttributes.JNR.ACTIVE_BLOCK, generatedBlock);
+            sessionBlock.setAttr(JNR.ACTIVE_BLOCK, generatedBlock);
 
             // set the updated blockHistory
-            sessionBlock.setAttr(ArcadeAttributes.JNR.BLOCK_HISTORY, blockHistory);
+            sessionBlock.setAttr(JNR.BLOCK_HISTORY, blockHistory);
 
             // increment the amount of blocks the player jumped
-            sessionBlock.setAttr(ArcadeAttributes.JNR.BLOCK_COUNT, ArcadeAttributes.COUNT_UP);
+            sessionBlock.setAttr(JNR.BLOCK_COUNT, ArcadeAttributes.COUNT_UP);
 
             // unlock the session as we are done now
-            sessionBlock.setAttr(ArcadeAttributes.JNR.LOCKED, false);
+            sessionBlock.setAttr(JNR.LOCKED, false);
         }, delay);
     }
 
